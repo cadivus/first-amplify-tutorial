@@ -4,9 +4,7 @@ import { generateClient } from "aws-amplify/data";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 
-const client = generateClient<Schema>({
-  authMode: 'apiKey'
-});
+const client = generateClient<Schema>();
 
 function TodoApp({ signOut, user }: { signOut?: () => void; user: any }) {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
