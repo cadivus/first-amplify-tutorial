@@ -4,16 +4,17 @@ import { generateClient } from "aws-amplify/data";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 
-const client = generateClient<Schema>();
-
-function TodoApp({ signOut, user }: { signOut: () => void; user: any }) {
+function TodoApp({ signOut, user }: { signOut?: () => void; user: any }) {
+  const client = generateClient<Schema>();
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
   useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }, []);
+    if (user) {
+      client.models.Todo.observeQuery().subscribe({
+        next: (data) => setTodos([...data.items]),
+      });
+    }
+  }, [user, client]);
 
   function createTodo() {
     client.models.Todo.create({ content: window.prompt("Todo content") });
