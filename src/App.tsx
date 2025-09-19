@@ -4,24 +4,38 @@ import { generateClient } from "aws-amplify/data";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 
+const client = generateClient<Schema>({
+  authMode: 'apiKey'
+});
+
 function TodoApp({ signOut, user }: { signOut?: () => void; user: any }) {
-  const client = generateClient<Schema>();
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
   useEffect(() => {
-    if (user) {
-      client.models.Todo.observeQuery().subscribe({
-        next: (data) => setTodos([...data.items]),
-      });
-    }
-  }, [user, client]);
+    const subscription = client.models.Todo.observeQuery().subscribe({
+      next: (data) => setTodos([...data.items]),
+      error: (error) => console.error('Query error:', error)
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
+  async function createTodo() {
+    const content = window.prompt("Todo content");
+    if (content) {
+      try {
+        await client.models.Todo.create({ content });
+      } catch (error) {
+        console.error('Create error:', error);
+      }
+    }
   }
 
-  function deleteTodo(id: string) {
-    client.models.Todo.delete({ id });
+  async function deleteTodo(id: string) {
+    try {
+      await client.models.Todo.delete({ id });
+    } catch (error) {
+      console.error('Delete error:', error);
+    }
   }
 
   return (
