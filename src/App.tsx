@@ -17,13 +17,39 @@ function App() {
     client.models.Todo.create({ content: window.prompt("Todo content") });
   }
 
+  function deleteTodo(id: string) {
+    client.models.Todo.delete({ id });
+  }
+
   return (
     <main>
+      <style>{`
+        .todo-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 0;
+        }
+        .remove-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 16px;
+          color: #ff4444;
+          padding: 4px;
+        }
+        .remove-btn:hover {
+          color: #cc0000;
+        }
+      `}</style>
       <h1>My todos</h1>
       <button onClick={createTodo}>+ new</button>
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
+          <li key={todo.id} className="todo-item">
+            <span>{todo.content}</span>
+            <button className="remove-btn" onClick={() => deleteTodo(todo.id)}>🗑️</button>
+          </li>
         ))}
       </ul>
       <div>
