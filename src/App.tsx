@@ -6,7 +6,7 @@ import "@aws-amplify/ui-react/styles.css";
 
 const client = generateClient<Schema>();
 
-function App() {
+function TodoApp({ signOut, user }: { signOut: () => void; user: any }) {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
   useEffect(() => {
@@ -24,8 +24,6 @@ function App() {
   }
 
   return (
-    <Authenticator>
-      {({ signOut, user }) => (
     <main>
       <style>{`
         .todo-item {
@@ -70,6 +68,14 @@ function App() {
         </a>
       </div>
     </main>
+  );
+}
+
+function App() {
+  return (
+    <Authenticator>
+      {({ signOut, user }) => (
+        <TodoApp signOut={signOut} user={user} />
       )}
     </Authenticator>
   );
